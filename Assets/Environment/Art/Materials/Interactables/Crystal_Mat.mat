@@ -97,8 +97,8 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     - _glowFrequency: 1
-    - _glowMax: 10
-    - _glowMin: 5
+    - _glowMax: 3
+    - _glowMin: 1
     - _marchDistance: 0.85
     - _numSteps: 5.25
     m_Colors:
