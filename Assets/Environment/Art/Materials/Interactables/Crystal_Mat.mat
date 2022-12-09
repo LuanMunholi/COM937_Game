@@ -97,12 +97,12 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     - _glowFrequency: 1
-    - _glowMax: 2
-    - _glowMin: 0
+    - _glowMax: 10
+    - _glowMin: 5
     - _marchDistance: 0.85
     - _numSteps: 5.25
     m_Colors:
-    - _Color: {r: 18.164822, g: 0.19020757, b: 0, a: 1}
+    - _Color: {r: 0.97887325, g: 0, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0.9810735, b: 2.433572, a: 0}
-    - _EmissiveColor: {r: 0.990566, g: 0, b: 0.029887702, a: 1}
+    - _EmissiveColor: {r: 0.6444799, g: 0.13013652, b: 0.8549928, a: 1}
   m_BuildTextureStacks: []
