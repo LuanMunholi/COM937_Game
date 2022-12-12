@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Wall identifier")]
     [SerializeField] LayerMask Wall;
+    [SerializeField] float wallDistance = 0.8f;
 
     [Header("Movement")]
     [SerializeField] float moveSpeed = 6f;
@@ -57,17 +58,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float dashDelay = 1f;
     private float startTime;
     private float dashCooldown;
+
+    [Header("Gravity")]
+    [SerializeField] float gravityAcceleration = 1.5f;
    
-
-
     Vector3 moveDirection;
     Vector3 slopeMoveDirection;
-
-    
-
     Rigidbody rb;
-
     RaycastHit slopeHit;
+
 
     private bool OnSlope()
     {
@@ -106,12 +105,12 @@ public class PlayerMovement : MonoBehaviour
             jumpStatus = false;
         }
 
-        if (Input.GetKeyDown(jumpKey) && isGrounded)
+        if (Input.GetKeyDown(jumpKey) && (isGrounded || OnSlope()))
         {
             GroundJump();
         }
 
-        if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && doublejump_bool)
+        if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && doublejump_bool && !OnSlope())
         {
             AirJump();
         }
@@ -181,6 +180,13 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
+        if(!isGrounded && ConfirmWall())
+        {
+            //faz nada
+        }else if(!isGrounded)
+        {
+            rb.AddForce(Physics.gravity * rb.mass * gravityAcceleration, ForceMode.Acceleration);
+        }
     }
 
     void MovePlayer()
@@ -228,7 +234,7 @@ public class PlayerMovement : MonoBehaviour
 
     bool ConfirmWall()
     {
-        return Physics.CheckSphere(transform.position, 0.6f, Wall);
+        return Physics.CheckSphere(transform.position, wallDistance, Wall);
     }
 
     bool TouchGround()

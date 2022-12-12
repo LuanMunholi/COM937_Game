@@ -62,6 +62,30 @@ namespace EvolveGames
         float installGravity;
         bool WallDistance;
         [HideInInspector] public float WalkingValue;
+
+        
+        //Novas coisas
+        float playerHeight = 2f;
+        RaycastHit slopeHit;
+
+        bool jumpStatus = false;
+
+        private bool OnSlope()
+        {
+            if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + 0.5f))
+            {
+                if (slopeHit.normal != Vector3.up)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
         void Start()
         {
             characterController = GetComponent<CharacterController>();
@@ -86,6 +110,9 @@ namespace EvolveGames
             {
                 moveDirection.y -= gravity * Time.deltaTime;
             }
+
+            
+
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
             isRunning = !isCrough ? CanRunning ? Input.GetKey(KeyCode.LeftShift) : false : false;
@@ -96,14 +123,26 @@ namespace EvolveGames
             float movementDirectionY = moveDirection.y;
             moveDirection = (forward * vertical) + (right * horizontal);
 
-            if (Input.GetButton("Jump") && canMove && characterController.isGrounded && !isClimbing)
+            if(characterController.isGrounded)
             {
-                moveDirection.y = jumpSpeed;
+                jumpStatus = true;
+            }
+            
+            if (Input.GetButton("Jump") && canMove && characterController.isGrounded && !isClimbing && !OnSlope())
+            {
+                moveDirection.y = jumpSpeed; 
             }
             else
             {
                 moveDirection.y = movementDirectionY;
             }
+
+            if (Input.GetButton("Jump") && !characterController.isGrounded && jumpStatus)
+            {
+                AirJump();
+            }
+           
+
             characterController.Move(moveDirection * Time.deltaTime);
             Moving = horizontal < 0 || vertical < 0 || horizontal > 0 || vertical > 0 ? true : false;
 
@@ -145,6 +184,15 @@ namespace EvolveGames
                 WallDistance = Physics.Raycast(GetComponentInChildren<Camera>().transform.position, transform.TransformDirection(Vector3.forward), out ObjectCheck, HideDistance, LayerMaskInt);
                 Items.ani.SetBool("Hide", WallDistance);
                 Items.DefiniteHide = WallDistance;
+            }
+        }
+
+        private void AirJump()
+        {
+            moveDirection.y = jumpSpeed;
+            while(!characterController.isGrounded)
+            {
+                jumpStatus = false;
             }
         }
 
