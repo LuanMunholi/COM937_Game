@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   enabled:
     overrideState: 1
-    value: 0
+    value: 1
   gradingMode:
     overrideState: 1
     value: 1
@@ -27,8 +27,8 @@ MonoBehaviour:
     overrideState: 1
     value: 2
   toneCurveToeStrength:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 0.203
   toneCurveToeLength:
     overrideState: 0
     value: 0.5
@@ -53,10 +53,10 @@ MonoBehaviour:
     value: 1
   temperature:
     overrideState: 0
-    value: 0
+    value: 97
   tint:
     overrideState: 0
-    value: 0
+    value: 100
   colorFilter:
     overrideState: 0
     value: {r: 1, g: 1, b: 1, a: 1}
@@ -70,8 +70,8 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   postExposure:
-    overrideState: 1
-    value: 0.4
+    overrideState: 0
+    value: -29.55
   contrast:
     overrideState: 0
     value: 0
@@ -1373,25 +1373,25 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 3.04
+    value: 1.3
   threshold:
     overrideState: 1
-    value: 0.71
+    value: 0.7
   softKnee:
     overrideState: 1
-    value: 0.5
+    value: 0
   clamp:
     overrideState: 0
     value: 65472
   diffusion:
-    overrideState: 1
+    overrideState: 0
     value: 7
   anamorphicRatio:
     overrideState: 0
-    value: 0
+    value: -1
   color:
-    overrideState: 0
-    value: {r: 1, g: 1, b: 1, a: 1}
+    overrideState: 1
+    value: {r: 1, g: 0, b: 0.10890055, a: 1}
   fastMode:
     overrideState: 0
     value: 0
@@ -1431,19 +1431,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 556797029e73b2347956b6579e77e05b, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
   focusDistance:
-    overrideState: 0
-    value: 10
+    overrideState: 1
+    value: 4
   aperture:
-    overrideState: 0
+    overrideState: 1
     value: 5.6
   focalLength:
-    overrideState: 0
+    overrideState: 1
     value: 50
   kernelSize:
-    overrideState: 0
-    value: 1
+    overrideState: 1
+    value: 3
