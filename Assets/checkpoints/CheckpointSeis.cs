@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CheckpointUm : MonoBehaviour
+public class CheckpointSeis : MonoBehaviour
 {
+    [SerializeField] private Transform player;
     [SerializeField] public deathZone deathzone;
 
     void OnTriggerEnter(Collider other)
     {
-        deathzone.setCheckpoint(1);
+        if (player.CompareTag("Player"))
+            deathzone.setCheckpoint(6);
     }
 }
