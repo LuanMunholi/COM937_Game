@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Crystal_Mat
-  m_Shader: {fileID: 4800000, guid: 507830799f98b934b966a82289413a43, type: 3}
+  m_Shader: {fileID: 4800000, guid: 18f8e9efdcc10074fb8c6481d40e4359, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _EMISSION
