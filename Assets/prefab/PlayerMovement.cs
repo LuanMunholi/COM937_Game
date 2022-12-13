@@ -31,12 +31,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jumping")]
     public float jumpForce = 5f;
     private bool jumpStatus = false;
+    public float coyoteTime = 0f;
+    public bool canJump = false;
     private Vector3 normalVector = Vector3.up;
 
     [Header("Keybinds")]
     [SerializeField] KeyCode jumpKey = KeyCode.Space;
     [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
-     [SerializeField] KeyCode dashKey = KeyCode.E;
+    [SerializeField] KeyCode dashKey = KeyCode.E;
 
     [Header("Drag")]
     [SerializeField] float groundDrag = 6f;
@@ -59,12 +61,10 @@ public class PlayerMovement : MonoBehaviour
     private float dashCooldown;
    
 
-
     Vector3 moveDirection;
     Vector3 slopeMoveDirection;
 
     
-
     Rigidbody rb;
 
     RaycastHit slopeHit;
@@ -91,6 +91,8 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
     }
 
+    public bool _Jumping = false;
+
     private void Update()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -100,7 +102,22 @@ public class PlayerMovement : MonoBehaviour
         ControlDrag();
         ControlSpeed();
         ConfirmWall();
-       
+
+        if (isGrounded)
+        {
+            _Jumping = false;
+            coyoteTime = 0f;
+        } else if (!_Jumping)
+        {
+            coyoteTime += Time.deltaTime;
+        }
+
+        if (coyoteTime < 0.3f && !_Jumping)
+        {
+            canJump = true;
+        } else canJump = false;
+
+
         if(TouchGround() || ConfirmWall())
         {
             jumpStatus = false;
@@ -109,13 +126,23 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
             GroundJump();
+            canJump = false;
+            _Jumping = true;
+        }
+
+        if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && canJump)
+        {
+            GroundJump();
+            canJump = false;
+            _Jumping = true;
         }
 
         if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && doublejump_bool)
         {
             AirJump();
+            canJump = false;
+            _Jumping = true;
         }
-
 
         dashCooldown -= Time.deltaTime;
         if(Input.GetKeyDown(dashKey) && dashCooldown <= 0 && dash_bool)
@@ -181,7 +208,17 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
+
+        if(!isGrounded && ConfirmWall())
+        {
+            
+        } else if(!isGrounded)
+        {
+            rb.AddForce(Physics.gravity * rb.mass * gravityAcceleration, ForceMode.Acceleration);
+        }
     }
+    
+    [SerializeField] float gravityAcceleration = 1.5f;
 
     void MovePlayer()
     {
@@ -205,7 +242,7 @@ public class PlayerMovement : MonoBehaviour
 
         while(startTime > 0)
         {
-            rb.AddForce(moveDirection * dashSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            rb.AddForce(moveDirection * dashSpeed * Time.deltaTime, ForceMode.Impulse);
             startTime -= Time.deltaTime;    
         }
         OnEndDash();
@@ -234,6 +271,16 @@ public class PlayerMovement : MonoBehaviour
     bool TouchGround()
     {
         return Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+    }
+
+    public void DashUnlock()
+    {
+        dash_bool = true;
+    }
+    
+    public void WallRideUnlock()
+    {
+        doublejump_bool = true;
     }
 
 }
