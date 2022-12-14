@@ -20,13 +20,13 @@ public class Interactions : MonoBehaviour
             {
                 if (hit.collider.CompareTag("chest1"))
                 {
-                    hit.transform.GetComponent<Animator>().SetTrigger("chest1");   
+                    hit.transform.GetComponent<Animator>().SetBool("chest1", true);   
                     powerUp1.SetActive(true);
                 }
 
                 if (hit.collider.CompareTag("chest2"))
                 {
-                    hit.transform.GetComponent<Animator>().SetTrigger("chest2");
+                    hit.transform.GetComponent<Animator>().SetBool("chest2", true);
                     powerUp2.SetActive(true);
                 }
             }

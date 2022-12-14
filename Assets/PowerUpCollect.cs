@@ -33,7 +33,7 @@ public class PowerUpCollect : MonoBehaviour
             }
 
             if (hit.collider.CompareTag("powerUpWall"))
-            {
+            {   
                 PlayerMovement playerDash = player.GetComponent<PlayerMovement>();
                 playerDash.WallRideUnlock();
                 sfx.Play();
