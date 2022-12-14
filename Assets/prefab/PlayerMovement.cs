@@ -10,6 +10,9 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] Transform orientation;
 
+    [SerializeField] public AudioSource pulo;
+    [SerializeField] public AudioSource dash;
+
     [Header("Booleans")]
     [SerializeField] bool doublejump_bool = false;
     [SerializeField] bool sprint_bool = false;
@@ -108,7 +111,10 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         estado = Estado.Normal;
         rb.freezeRotation = true;
+        pulo.Stop();
+        dash.Stop();
     }
+
 
     private void Update()
     {
@@ -131,17 +137,20 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
+            pulo.Play();
             GroundJump();
         }
 
         if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && doublejump_bool)
         {
+            pulo.Play();
             AirJump();
         }
 
         dashCooldown -= Time.deltaTime;
         if(Input.GetKeyDown(dashKey) && dashCooldown <= 0 && dash_bool)
         {
+            dash.Play();
             Dash();
         }
 
@@ -281,7 +290,7 @@ public class PlayerMovement : MonoBehaviour
         return Physics.CheckSphere(transform.position, 0.6f, Wall);
     }
 
-    bool TouchGround()
+    public bool TouchGround()
     {
         return Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
     }

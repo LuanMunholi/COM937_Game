@@ -6,6 +6,8 @@ public class PowerUpCollect : MonoBehaviour
 {
     [SerializeField] private GameObject player;
     [SerializeField] public Transform camera;
+    [SerializeField] public AudioSource sfx;
+
     public float distInt;
     public bool interacted = false;
     public int layer_mask;
@@ -26,6 +28,7 @@ public class PowerUpCollect : MonoBehaviour
             {
                 PlayerMovement playerDash = player.GetComponent<PlayerMovement>();
                 playerDash.DashUnlock();
+                sfx.Play();
                 Destroy(gameObject); 
             }
 
@@ -33,6 +36,7 @@ public class PowerUpCollect : MonoBehaviour
             {
                 PlayerMovement playerDash = player.GetComponent<PlayerMovement>();
                 playerDash.WallRideUnlock();
+                sfx.Play();
                 Destroy(gameObject);
             }
         }

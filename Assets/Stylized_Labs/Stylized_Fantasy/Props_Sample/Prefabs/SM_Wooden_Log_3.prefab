@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 1072759939812303859}
   m_Layer: 0
   m_Name: SM_Wooden_Log_3
-  m_TagString: Untagged
+  m_TagString: chaoMadeira
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

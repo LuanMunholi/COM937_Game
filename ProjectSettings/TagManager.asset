@@ -10,6 +10,8 @@ TagManager:
   - powerUpDash
   - chest1
   - chest2
+  - chaoPedra
+  - chaoMadeira
   layers:
   - Default
   - TransparentFX

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1530704883977652781}
   m_Layer: 8
   m_Name: P_AncientRuins_Rock3
-  m_TagString: Untagged
+  m_TagString: chaoPedra
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
