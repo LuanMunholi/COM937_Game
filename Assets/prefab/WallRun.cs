@@ -70,13 +70,22 @@ public class WallRun : MonoBehaviour
         {
             if (wallLeft)
             {
+                rb.constraints = RigidbodyConstraints.FreezePositionY;
                 StartWallRun();
-                Debug.Log("wall running on the left");
+                //Debug.Log("wall running on the left");
+                rb.constraints = RigidbodyConstraints.None;
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+
             }
             else if (wallRight)
             {
+                rb.constraints = RigidbodyConstraints.FreezePositionY;
                 StartWallRun();
-                Debug.Log("wall running on the right");
+                //Debug.Log("wall running on the right"); 
+                rb.constraints = RigidbodyConstraints.None;
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+
             }
             else
             {
@@ -109,6 +118,7 @@ public class WallRun : MonoBehaviour
         {
             if (wallLeft)
             {
+                
                 Vector3 wallRunJumpDirection = transform.up + leftWallHit.normal;
                 rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
                 rb.AddForce(wallRunJumpDirection * wallRunJumpForce * 100, ForceMode.Force);

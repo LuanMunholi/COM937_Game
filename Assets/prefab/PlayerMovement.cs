@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] bool doublejump_bool = false;
     [SerializeField] bool sprint_bool = false;
     [SerializeField] bool dash_bool = false;
+    [SerializeField] bool hook_bool = false;
 
     [Header("Wall identifier")]
     [SerializeField] LayerMask Wall;
@@ -21,7 +22,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] float moveSpeed = 6f;
     [SerializeField] float airMultiplier = 0.4f;
+    [SerializeField] float gravity_acceleration = 6f;
+    [SerializeField] float gravity = 10f;
     float movementMultiplier = 10f;
+
 
     [Header("Sprinting")]
     [SerializeField] float walkSpeed = 4f;
@@ -31,14 +35,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jumping")]
     public float jumpForce = 5f;
     private bool jumpStatus = false;
-    public float coyoteTime = 0f;
-    public bool canJump = false;
     private Vector3 normalVector = Vector3.up;
 
     [Header("Keybinds")]
     [SerializeField] KeyCode jumpKey = KeyCode.Space;
     [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] KeyCode dashKey = KeyCode.E;
+    [SerializeField] KeyCode hookButtom = KeyCode.R;
 
     [Header("Drag")]
     [SerializeField] float groundDrag = 6f;
@@ -59,15 +62,30 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float dashDelay = 1f;
     private float startTime;
     private float dashCooldown;
-   
 
+    [Header("Hook")]
+    [SerializeField] Camera cam;
+    [SerializeField] GameObject ganchoObj;
+    [SerializeField] GameObject paiGancho;
+    [SerializeField] float hookSpeedMult = 500f;
+    [SerializeField] float hookDistance = 10f;
+
+    public Vector3 posicaoHitGancho;
+    public Estado estado;
+    Vector3 velocidadeMomentanea;
+    Rigidbody rb;
     Vector3 moveDirection;
     Vector3 slopeMoveDirection;
-
-    
-    Rigidbody rb;
-
     RaycastHit slopeHit;
+    RaycastHit hit;
+
+    bool estado_normal = true;
+    public enum Estado
+    {
+        Normal,
+        GanchoPuxando,
+        GanchoIndo,
+    }
 
     private bool OnSlope()
     {
@@ -88,36 +106,24 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        estado = Estado.Normal;
         rb.freezeRotation = true;
     }
-
-    public bool _Jumping = false;
 
     private void Update()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
 
         MyInput();
         ControlDrag();
         ControlSpeed();
         ConfirmWall();
 
-        if (isGrounded)
+        if(hook_bool)
         {
-            _Jumping = false;
-            coyoteTime = 0f;
-        } else if (!_Jumping)
-        {
-            coyoteTime += Time.deltaTime;
+            AtiraGancho();
         }
-
-        if (coyoteTime < 0.3f && !_Jumping)
-        {
-            canJump = true;
-        } else canJump = false;
-
-
+        
         if(TouchGround() || ConfirmWall())
         {
             jumpStatus = false;
@@ -126,22 +132,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
             GroundJump();
-            canJump = false;
-            _Jumping = true;
-        }
-
-        if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && canJump)
-        {
-            GroundJump();
-            canJump = false;
-            _Jumping = true;
         }
 
         if(Input.GetKeyDown(jumpKey) && !isGrounded && !ConfirmWall() && !jumpStatus && doublejump_bool)
         {
             AirJump();
-            canJump = false;
-            _Jumping = true;
         }
 
         dashCooldown -= Time.deltaTime;
@@ -149,6 +144,30 @@ public class PlayerMovement : MonoBehaviour
         {
             Dash();
         }
+
+        switch(estado)
+        {
+            default:
+            case Estado.Normal:
+                estado_normal = true;
+                paiGancho.SetActive(false);
+                ganchoObj.transform.parent = paiGancho.transform;
+                ganchoObj.transform.localPosition = Vector3.zero;
+                break;
+
+            case Estado.GanchoIndo:
+                estado_normal = false;
+                ganchoObj.transform.parent = null;
+                paiGancho.SetActive(true);
+                GanchoMovimentando();
+                break;
+
+            case Estado.GanchoPuxando:
+                MovimentoPersonagemGancho();
+                break;
+
+        }
+        
 
         slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
     }
@@ -208,17 +227,11 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
-
-        if(!isGrounded && ConfirmWall())
+        if(!ConfirmWall() && estado_normal)
         {
-            
-        } else if(!isGrounded)
-        {
-            rb.AddForce(Physics.gravity * rb.mass * gravityAcceleration, ForceMode.Acceleration);
+            rb.AddForce(Physics.gravity * gravity_acceleration, ForceMode.Acceleration);
         }
     }
-    
-    [SerializeField] float gravityAcceleration = 1.5f;
 
     void MovePlayer()
     {
@@ -242,7 +255,7 @@ public class PlayerMovement : MonoBehaviour
 
         while(startTime > 0)
         {
-            rb.AddForce(moveDirection * dashSpeed * Time.deltaTime, ForceMode.Impulse);
+            rb.AddForce(moveDirection * dashSpeed * Time.deltaTime, ForceMode.VelocityChange);
             startTime -= Time.deltaTime;    
         }
         OnEndDash();
@@ -272,6 +285,56 @@ public class PlayerMovement : MonoBehaviour
     {
         return Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
     }
+
+    void MovimentoPersonagemGancho()
+    {
+        
+        float velocidadeMin = 10f;
+        float velocidadeMax = 40f;
+        Vector3 direcao = (posicaoHitGancho - transform.position).normalized;
+
+        float puxaVel = Mathf.Clamp(Vector3.Distance(transform.position, posicaoHitGancho),
+            velocidadeMin, velocidadeMax);
+
+       
+        rb.useGravity = false;
+        if(Vector3.Distance(transform.position, posicaoHitGancho) < hookDistance)
+        {
+            estado = Estado.Normal;
+            paiGancho.SetActive(false);
+            rb.useGravity = true;
+        }
+        else
+        {
+            
+            rb.AddForce(direcao * puxaVel * Time.deltaTime * hookSpeedMult, ForceMode.Force);
+        }
+
+        
+    }
+
+    void GanchoMovimentando()
+    {
+        ganchoObj.transform.LookAt(posicaoHitGancho);
+        ganchoObj.transform.position = Vector3.MoveTowards(ganchoObj.transform.position, 
+            posicaoHitGancho, 50 * Time.deltaTime);
+
+        if(ganchoObj.transform.position == posicaoHitGancho)
+        {
+            estado = Estado.GanchoPuxando;
+        }
+    }
+    void AtiraGancho()
+    {
+        if(Input.GetKeyDown(hookButtom))
+        {
+            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit))
+            {
+                posicaoHitGancho = hit.point;
+                estado = Estado.GanchoIndo;
+            }
+        }
+    }  
 
     public void DashUnlock()
     {
