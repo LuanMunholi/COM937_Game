@@ -72,20 +72,22 @@ MonoBehaviour:
   doublejump_bool: 0
   sprint_bool: 0
   dash_bool: 0
+  hook_bool: 0
   Wall:
     serializedVersion: 2
     m_Bits: 128
   moveSpeed: 6
   airMultiplier: 0.4
+  gravity_acceleration: 6
+  gravity: 10
   walkSpeed: 4
   sprintSpeed: 6
   acceleration: 10
   jumpForce: 5
-  coyoteTime: 0
-  canJump: 0
   jumpKey: 32
   sprintKey: 304
   dashKey: 101
+  hookButtom: 114
   groundDrag: 6
   airDrag: 2
   groundCheck: {fileID: 6177542533022955446}
@@ -96,8 +98,13 @@ MonoBehaviour:
   dashSpeed: 500
   dashTime: 1
   dashDelay: 1
-  _Jumping: 0
-  gravityAcceleration: 1.5
+  cam: {fileID: 0}
+  ganchoObj: {fileID: 0}
+  paiGancho: {fileID: 0}
+  hookSpeedMult: 500
+  hookDistance: 10
+  posicaoHitGancho: {x: 0, y: 0, z: 0}
+  estado: 0
 --- !u!114 &4084997201258906814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +347,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6177542532585351007}
     m_Modifications:
+    - target: {fileID: 76370233056781991, guid: aed1936be112d9245b7eaef679198969,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 76370233056781991, guid: aed1936be112d9245b7eaef679198969,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.59
+      objectReference: {fileID: 0}
     - target: {fileID: 76370233641907577, guid: aed1936be112d9245b7eaef679198969,
         type: 3}
       propertyPath: m_RootOrder
