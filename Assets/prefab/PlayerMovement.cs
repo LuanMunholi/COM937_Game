@@ -258,6 +258,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     
+    private IEnumerator wait()
+    {
+        yield return new WaitForSeconds (5);
+    }
+
     private void Dash()
     {
         OnStartDash();
@@ -268,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
             startTime -= Time.deltaTime;    
         }
         OnEndDash();
-        
+        StartCoroutine("wait");
     }
 
     private void OnStartDash()
